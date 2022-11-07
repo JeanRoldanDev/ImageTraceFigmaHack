@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <!-- hack https://www.pngtosvg.com/ -->
+    <div id="holder" class="select-box" style="display: block">
+      <h2>Drag &amp; Drop a file</h2>
+      <input type="file" name="file" id="file" class="inputfile" />
+      <label for="file">Choose a file</label>
+    </div>
+    <canvas id="canvas"></canvas>
+    <canvas id="effectcanvas"></canvas>
+    <div class="image-row row">
+      <div id="imageContainer" class="col-sm-6">
+        <h1>INICIO</h1>
+        <div class="text-left clearfix m-h-80 m-l-10">
+          <div class="pull-left m-10 m-b-0 m-t-20">
+            <span class="break">Colors</span
+            ><button class="range-btn-left" onclick="changeRange(-1)">–</button
+            ><input
+              class="color-range-input"
+              id="colorRange"
+              value="5"
+              readonly=""
+            /><button class="range-btn-right" onclick="changeRange(1)">
+              +
+            </button>
+          </div>
+          <div class="pull-left m-r-10">
+            <form class="m-b-0 m-t-20" onchange="onDitherChange(event)"></form>
+          </div>
+          <div class="pull-left m-10 m-b-0 m-t-20">
+            <span class="break">Simplify</span
+            ><button class="range-btn-left" onclick="changeSimplify(-1)">
+              –</button
+            ><input
+              class="color-range-input"
+              id="simplifyRange"
+              value="0"
+              readonly=""
+            /><button class="range-btn-right" onclick="changeSimplify(1)">
+              +
+            </button>
+          </div>
+          <div class="pull-left m-10 m-b-0 m-t-20">
+            <span class="break">Palette</span>
+            <ul id="pickedcolorlist" class="pickedcolors"></ul>
+          </div>
+          <div class="smallhorad" id="smallhorad"></div>
+        </div>
+        <div class="settingsPanel">
+          <div class="settingsHalf">
+            <span>Gamma:</span><br /><input
+              type="range"
+              min="0"
+              max="200"
+              value="100"
+              steps="5"
+              class="slider"
+              id="gammaSldr"
+              oninput="gammaChange(event)"
+            /><br /><span>Contrast:</span><br /><input
+              type="range"
+              min="-200"
+              max="200"
+              value="0"
+              step="5"
+              class="slider"
+              id="contrastSldr"
+              oninput="contrastChange(event)"
+            />
+          </div>
+          <img
+            id="resetBtn"
+            src="data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20width=%2224%22%20height=%2224%22%3E%3C/svg%3E"
+            onclick="resetEffects()"
+            class="ezlazyload"
+            data-ezsrc="../images/reseticon.png"
+          />
+          <div class="settingsHalf">
+            <span>Hue:</span><br /><input
+              type="range"
+              min="0"
+              max="360"
+              value="0"
+              step="5"
+              class="slider"
+              id="hueSldr"
+              oninput="hueChange(event)"
+            /><br /><span>Saturation:</span><br /><input
+              type="range"
+              min="-100"
+              max="100"
+              value="0"
+              step="5"
+              class="slider"
+              id="satSldr"
+              oninput="greyscaleChange(event)"
+            />
+          </div>
+        </div>
+        <div id="settingsbtn" style="display: none" onclick="settings();">
+          ⚙
+        </div>
+        <img id="originalImg" onload="onOriginalImgLoad()" data-l="" />
+        <div style="padding-top: 20px">
+          <button
+            class="btn-primary inline-block align-top"
+            onclick="generate();"
+          >
+            Generate
+          </button>
+        </div>
+      </div>
+      <div class="svg-wrap col-sm-6">
+        <H1>RESULTADO</H1>
+        <div class="text-left clearfix m-h-80">
+          <div class="pull-left">
+            <span class="break">Colors</span>
+            <ul id="colorList" class="colors"></ul>
+          </div>
+        </div>
+        <div id="svgContainer" style="display: none !important"></div>
+        <div id="ConvertedSVGContainer">
+          <canvas id="svgWithAspectRatio" width="400" height="400"></canvas>
+        </div>
+        <canvas id="pngcanvas" style="display: none !important"></canvas>
+        <div id="loadingMsg">Generating Vector..</div>
+        <script ez-screx="true">
+          ezoicSiteSpeed(
+            jQuery(document),
+            String(/documentReady/)
+              .substring(1)
+              .slice(0, -1),
+            String(/jQuery-document-dot-ready/)
+              .substring(1)
+              .slice(0, -1),
+            function ($) {
+              $(".wp_accept_pp_button_form_classic").submit(function (e) {
+                var form_obj = $(this);
+                var other_amt = form_obj.find("input[name=other_amount]").val();
+                if (!isNaN(other_amt) && other_amt.length > 0) {
+                  options_val = other_amt;
+                  $("<input>")
+                    .attr({
+                      type: "hidden",
+                      id: "amount",
+                      name: "amount",
+                      value: options_val,
+                    })
+                    .appendTo(form_obj);
+                }
+                return;
+              });
+            }
+          );
+        </script>
+        <button
+          id="download-btn"
+          type="button"
+          class="btn btn-primary"
+    
+        >
+          Download SVG
+        </button>
+      </div>
+    </div>
+    <div class="zero" style="overflow: hidden;"><img id="fullsizeImg" data-l=""></div>
+
+
+
+
+
+    <script src="jquery-3.6.1.min.js"></script>
+    <script src="ss.js"></script>
+
+    <script src="color-thief.js"></script>
+    <script src="popper.min.js"></script>
+    <script src="CanvasEffects.worker.min.js"></script>
+    <script src="appfree.js"></script>
+    <script src="all_5_4.js"></script>
+    <script>
+      // ezoicSiteSpeed(
+      //   jQuery(document),
+      //   String(/documentReady/)
+      //     .substring(1)
+      //     .slice(0, -1),
+      //   String(/jQuery-document-dot-ready/)
+      //     .substring(1)
+      //     .slice(0, -1),
+      //   function ($) {
+      //     $(".wp_accept_pp_button_form_classic").submit(function (e) {
+      //       var form_obj = $(this);
+      //       var other_amt = form_obj.find("input[name=other_amount]").val();
+      //       if (!isNaN(other_amt) && other_amt.length > 0) {
+      //         options_val = other_amt;
+      //         $("<input>")
+      //           .attr({
+      //             type: "hidden",
+      //             id: "amount",
+      //             name: "amount",
+      //             value: options_val,
+      //           })
+      //           .appendTo(form_obj);
+      //       }
+      //       return;
+      //     });
+      //   }
+      // );
+    </script>
+  </body>
+</html>
